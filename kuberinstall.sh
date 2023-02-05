@@ -3,6 +3,21 @@
 # update the system and install dependencies
 sudo apt-get update
 sudo apt-get upgrade -y
+
+# sudo hostnamectl set-hostname "k8smaster.example.net"
+# exec bash
+# sudo hostnamectl set-hostname "k8sworker1.example.net"   // 1st worker node
+# sudo hostnamectl set-hostname "k8sworker2.example.net"   // 2nd worker node
+# exec bash
+
+# Add the following entries in /etc/hosts file on each node
+
+# 192.168.1.173   k8smaster.example.net k8smaster
+# 192.168.1.174   k8sworker1.example.net k8sworker1
+# 192.168.1.175   k8sworker2.example.net k8sworker2
+
+
+
 sudo apt install docker.io -y
 sudo systemctl enable docker
 sudo systemctl start docker
@@ -47,4 +62,10 @@ sudo apt update
 sudo apt install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
-sudo kubeadm init
+sudo kubeadm init --control-plane-endpoint=k8smaster.example.net
+mkdir -p $HOME/.kube
+
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl cluster-info
+kubectl get nodes
